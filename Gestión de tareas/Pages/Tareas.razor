@@ -1,0 +1,107 @@
+﻿@page "/tareas"
+@using GestionTareasApp.Models
+@using GestionTareasApp.Data
+@inject GestionTareasContext Context
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore
+
+
+<h3>Listado de Tareas</h3>
+
+<div class="mb-3">
+    <label for="filtroEstado">Filtrar por estado:</label>
+    <select id="filtroEstado" class="form-select" style="width:200px;" @onchange="OnFiltroChanged">
+        <option value="">Todos</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="Completa">Completa</option>
+    </select>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Límite</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (tareasFiltradas is not null)
+        {
+            foreach (var tarea in tareasFiltradas)
+            {
+                <tr>
+                    <td>@tarea.Titulo</td>
+                    <td>@tarea.Descripcion</td>
+                    <td>@tarea.FechaInicio.ToShortDateString()</td>
+                    <td>@tarea.FechaLimite.ToShortDateString()</td>
+                    <td>@tarea.Prioridad</td>
+                    <td>@tarea.Estado</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="() => EditarTarea(tarea.Id)">Editar</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarTarea(tarea.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<button class="btn btn-success" @onclick="NuevaTarea">Agregar Nueva Tarea</button>
+
+@code {
+    private List<Tarea> tareasFiltradas = new();
+    private string filtroEstado = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarTareas();
+    }
+
+    private async Task CargarTareas()
+    {
+        // Trae solo tareas activas (borrado lógico)
+        var query = Context.Tareas.Where(t => t.Activo);
+
+        // Si hay un filtro por estado, agrégalo a la consulta
+        if (!string.IsNullOrEmpty(filtroEstado))
+        {
+            query = query.Where(t => t.Estado == filtroEstado);
+        }
+
+        tareasFiltradas = await query.ToListAsync();
+    }
+
+    private async Task OnFiltroChanged(ChangeEventArgs e)
+    {
+        filtroEstado = e.Value?.ToString() ?? "";
+        await CargarTareas();
+    }
+
+    private void EditarTarea(int id)
+    {
+        NavigationManager.NavigateTo($"/editarTarea/{id}");
+    }
+
+    private void NuevaTarea()
+    {
+        NavigationManager.NavigateTo("/editarTarea");
+    }
+
+    private async Task EliminarTarea(int id)
+    {
+        var tarea = await Context.Tareas.FindAsync(id);
+        if (tarea != null)
+        {
+            // Borrado lógico: marcar como inactiva la tarea
+            tarea.Activo = false;
+            await Context.SaveChangesAsync();
+            await CargarTareas();
+        }
+    }
+}

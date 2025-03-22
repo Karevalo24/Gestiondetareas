@@ -1,0 +1,96 @@
+﻿@page "/editarTarea/{TareaId:int?}"
+@using GestionTareasApp.Models
+@using GestionTareasApp.Data
+@inject GestionTareasContext Context
+@inject NavigationManager NavigationManager
+
+<h3>@(tarea.Id == 0 ? "Nueva Tarea" : "Editar Tarea")</h3>
+
+<EditForm Model="tarea" OnValidSubmit="GuardarTarea">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="titulo" class="form-label">Titulo</label>
+        <InputTextArea id="descripcion" class="form-control" @bind-Value="tarea.Titulo" />
+    </div>
+    <div class="mb-3">
+        <label for="descripcion" class="form-label">Descripción</label>
+        <InputTextArea id="descripcion" class="form-control" @bind-Value="tarea.Descripcion" />
+    </div>
+
+    <div class="mb-3">
+        <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+        <InputDate id="fechaInicio" class="form-control" @bind-Value="tarea.FechaInicio" />
+    </div>
+
+    <div class="mb-3">
+        <label for="fechaLimite" class="form-label">Fecha Límite</label>
+        <InputDate id="fechaLimite" class="form-control" @bind-Value="tarea.FechaLimite" />
+    </div>
+
+    <div class="mb-3">
+        <label for="estado" class="form-label">Estado</label>
+        <InputSelect id="estado" class="form-select" @bind-Value="tarea.Estado">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Completa">Completa</option>
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? TareaId { get; set; }
+
+    private Tarea tarea = new Tarea();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TareaId.HasValue)
+        {
+            // Si se recibe un ID, se busca la tarea en la base de datos para editarla
+            var tareaDB = await Context.Tareas.FindAsync(TareaId.Value);
+            if (tareaDB is not null)
+            {
+                tarea = tareaDB;
+            }
+        }
+        else
+        {
+            // Configuración inicial para una nueva tarea
+            tarea.FechaInicio = DateTime.Today;
+            tarea.FechaLimite = DateTime.Today.AddDays(1);
+            tarea.Estado = "Pendiente";
+            tarea.Activo = true;
+        }
+
+        // Asegúrate de asignar el UsuarioId aquí
+        // Ejemplo: Si usas un sistema de autenticación de ASP.NET Identity para obtener el usuario actual:
+        tarea.UsuarioId = 1; // Asignar el UsuarioId de forma correcta, por ejemplo, el ID del usuario autenticado
+    }
+
+    private async Task GuardarTarea()
+    {
+        if (tarea.Id == 0)
+        {
+            // Si es nueva, se agrega al contexto
+            Context.Tareas.Add(tarea);
+        }
+        else
+        {
+            // Si ya existe, se actualiza
+            Context.Tareas.Update(tarea);
+        }
+
+        await Context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/tareas");
+    }
+
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/tareas");
+    }
+}
