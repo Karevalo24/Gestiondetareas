@@ -2,21 +2,36 @@
 
 
 	<div class="container">
-		<h3>Registration</h3>
+		<h3>Registrar</h3>
 
+	@code {
+
+		private string User { get; set; } = string.Empty;
+		private string Email { get; set; } = string.Empty;
+		private string Password { get; set; } = string.Empty;
+	}
 		<form>
-			<label>User:</label>
-			<input type="text" required />
+			
+			<label>Usuario:</label>
+			<input type="text" @bind="User" placeholder="Ingrese su usuario" required />
 
-
-			<label>Password:</label>
-			<input type="password" required />
-
+			<br/>
+			<br/>
+			<label>Correo Electronico:</label>
+			<input type="text" @bind="Email" placeholder="Ingrese su correo" required />
 			 
-			<button type="submit">Register</button>
+			<br/>
+			<br/>
+			<label>Contraseña:</label>
+			<input type="text" @bind="Password" placeholder="Ingrese su contraseña" required />		
+
+			<br/>
+			<br/>
+			<button type="submit">Registrar</button>
+		
+
 		</form>
 
 	</div>
-	@code {
-		
-	}
+	
+	
