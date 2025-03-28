@@ -1,23 +1,39 @@
 using Gestión_de_tareas.Data;
-using GestionTareasApp.Data;
 using GestorTareasBlazor.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using GestionTareasApp.Authentication;
 using Microsoft.EntityFrameworkCore;
+using GestionTareasApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 builder.Services.AddDbContext<GestionTareasContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GestionTareasContext")));
 
 // Add services to the container.
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddScoped<TareaService>();
-
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthorizationCore();
 
 var app = builder.Build();
+
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
