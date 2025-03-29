@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Gestión_de_tareas.Models
+namespace GestionTareasApp.Models
 {
     public class Usuario
     {

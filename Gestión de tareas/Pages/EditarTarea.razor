@@ -49,6 +49,14 @@
 </EditForm>
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        var usuario = await SessionStorage.GetItemAsync<string>("usuario");
+        if (string.IsNullOrEmpty(usuario))
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
     [Parameter]
     public int? TareaId { get; set; }
 

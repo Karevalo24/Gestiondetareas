@@ -8,7 +8,7 @@
 
 <h3>Iniciar Sesión</h3>
 
-<form @onsubmit="Login">
+<form @onsubmit="IniciarSesion">
     <label>Usuario:</label>
     <input type="text" @bind="User" placeholder="Ingrese su usuario" required />
 
@@ -27,17 +27,14 @@
     private string Password { get; set; } = string.Empty;
     private string MensajeError { get; set; } = string.Empty;
 
-    private async Task Login()
+    private async Task IniciarSesion()
     {
         var usuario = await Context.Usuarios
             .FirstOrDefaultAsync(u => u.NombreUsuario == User && u.Contraseña == Password);
 
         if (usuario != null)
         {
-            // Guardar el UsuarioId en SessionStorage
             await SessionStorage.SetItemAsync("UsuarioId", usuario.Id);
-
-            // Redirigir al usuario a la página principal
             NavigationManager.NavigateTo("/");
         }
         else

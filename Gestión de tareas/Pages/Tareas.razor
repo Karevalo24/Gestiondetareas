@@ -55,6 +55,14 @@
 <button class="btn btn-success" @onclick="NuevaTarea">Agregar Nueva Tarea</button>
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        var usuario = await SessionStorage.GetItemAsync<string>("usuario");
+        if (string.IsNullOrEmpty(usuario))
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
     private List<Tarea> tareasFiltradas = new();
     private string filtroEstado = "";
 
@@ -104,4 +112,5 @@
             await CargarTareas();
         }
     }
+
 }

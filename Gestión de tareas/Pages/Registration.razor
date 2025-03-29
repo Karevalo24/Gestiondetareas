@@ -41,14 +41,9 @@ builder.Services.AddBlazoredSessionStorage();
                 Contraseña = Password
             };
 
-        // Guardar usuario en la base de datos
         Context.Usuarios.Add(nuevoUsuario);
         await Context.SaveChangesAsync();
-
-        // Guardar el UsuarioId en SessionStorage
         await SessionStorage.SetItemAsync("UsuarioId", nuevoUsuario.Id);
-
-        // Redirigir al usuario al login
         NavigationManager.NavigateTo("/Login");
     }
 }

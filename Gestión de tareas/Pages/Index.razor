@@ -1,4 +1,6 @@
 ﻿@page "/"
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject NavigationManager Navigation
 
 <PageTitle>Index</PageTitle>
 
@@ -6,3 +8,13 @@
 
 Bienvenido al gestor de tareas
 
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var usuario = await SessionStorage.GetItemAsync<string>("usuario");
+        if (string.IsNullOrEmpty(usuario))
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
+}
