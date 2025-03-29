@@ -37,6 +37,13 @@
         </InputSelect>
     </div>
 
+    <label for="prioridad">Prioridad:</label>
+    <select id="prioridad" class="form-select" @bind="tarea.Prioridad">
+        <option value="Alta">Alta</option>
+        <option value="Media">Media</option>
+        <option value="Baja">Baja</option>
+    </select>
+
     <button type="submit" class="btn btn-success">Guardar</button>
     <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 </EditForm>

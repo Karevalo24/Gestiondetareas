@@ -26,7 +26,8 @@ namespace GestionTareasApp.Models
         public string Estado { get; set; } = string.Empty; // "Pendiente" o "Completa"
 
         [Required(ErrorMessage = "La prioridad es obligatoria.")]
-        public int Prioridad { get; set; } = 1; // Prioridad por defecto
+        [RegularExpression("Alta|Media|Baja", ErrorMessage = "La prioridad debe ser Alta, Media o Baja.")]
+        public string Prioridad { get; set; } = "Media"; // Valor por defecto
 
         public bool Activo { get; set; } = true;
 
