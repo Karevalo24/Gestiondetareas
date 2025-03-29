@@ -4,6 +4,8 @@ using GestorTareasBlazor.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using Blazored.SessionStorage;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<TareaService>();
+builder.Services.AddBlazoredSessionStorage();
+
 
 
 var app = builder.Build();

@@ -1,4 +1,5 @@
-﻿using GestionTareasApp.Models;
+﻿using Gestión_de_tareas.Models;
+using GestionTareasApp.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionTareasApp.Data
@@ -11,6 +12,7 @@ namespace GestionTareasApp.Data
         }
 
         public DbSet<Tarea> Tareas { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; } 
 
         // Si en el futuro agregas más entidades, decláralas aquí.
 
