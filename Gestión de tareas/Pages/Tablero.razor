@@ -1,0 +1,59 @@
+﻿@page "/tablero"
+@using GestionTareasApp.Models
+@using GestionTareasApp.Data
+@inject GestionTareasContext Context
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore;
+@inject IJSRuntime JS
+
+<h3>Tablero de Tareas</h3>
+
+<div class="d-flex justify-content-around">
+    <div class="columna" ondrop="drop(event)" ondragover="allowDrop(event)" id="pendiente">
+        <h4>Pendiente</h4>
+        @foreach (var tarea in tareasPendientes)
+        {
+            <div class="tarea" draggable="true" ondragstart="drag(event)" id="tarea-@tarea.Id">
+                @tarea.Titulo
+            </div>
+        }
+    </div>
+    <div class="columna" ondrop="drop(event)" ondragover="allowDrop(event)" id="completa">
+        <h4>Completa</h4>
+        @foreach (var tarea in tareasCompletas)
+        {
+            <div class="tarea" draggable="true" ondragstart="drag(event)" id="tarea-@tarea.Id">
+                @tarea.Titulo
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Tarea> tareasPendientes = new();
+    private List<Tarea> tareasCompletas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarTareas();
+    }
+
+    private async Task CargarTareas()
+    {
+        var tareas = await Context.Tareas.Where(t => t.Activo).ToListAsync();
+        tareasPendientes = tareas.Where(t => t.Estado == "Pendiente").ToList();
+        tareasCompletas = tareas.Where(t => t.Estado == "Completa").ToList();
+    }
+
+    public async Task CambiarEstadoTarea(int tareaId, string nuevoEstado)
+    {
+        var tarea = await Context.Tareas.FindAsync(tareaId);
+        if (tarea != null)
+        {
+            tarea.Estado = nuevoEstado;
+            await Context.SaveChangesAsync();
+            await CargarTareas();
+            StateHasChanged();
+        }
+    }
+}
